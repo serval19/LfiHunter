@@ -24,7 +24,13 @@ test_payloads = [
     'C:\\windows\\win.ini',
     
     # File URI scheme
-    'file:///etc/passwd'
+    'file:///etc/passwd',
+    # RFI payloads (modified to use public resources)
+    'http://example.com/',
+    'https://www.google.com/favicon.ico',
+    'ftp://ftp.gnu.org/gnu/README',
+    '//example.com/test.txt',
+    '\\\\example.com\\share\\test.txt'
 ]
 
 def test_lfi(url):
@@ -42,6 +48,12 @@ def test_lfi(url):
             
             elif "[boot loader]" in response.text:
                 found_vulnerabilities.append(("Windows", payload))
+            elif "example.com" in payload and "Example Domain" in response.text:
+                found_vulnerabilities.append(("RFI",payload))
+            elif "google.com" in payload and response.status_code == 200:
+                found_vulnerabilities.append(("RFI", payload))
+            elif "gnu.org" in payload and "GNU" in response.text:
+                found_vulnerabilities.append(("RFI", payload))
                 
         except Exception as e:
             continue
