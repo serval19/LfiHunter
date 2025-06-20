@@ -36,12 +36,16 @@ test_payloads = [
 def test_lfi(url):
     print(f"\nTesting URL: {url}")
     found_vulnerabilities = []
+    headers={
+         'User-Agent': 'Mozilla/5.0',       # Pretends to be a modern browser
+        'Accept': '*/*'            
+    }
     
     for payload in test_payloads:
         try:
             test_url = url + payload
             
-            response = requests.get(test_url, timeout=5)
+            response = requests.get(test_url,headers=headers, timeout=5)
             
             if "root:x:" in response.text:
                 found_vulnerabilities.append(("Linux", payload))
